@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pace Calculator</title>
+  <meta name="description" content="Calcule ton allure ou ton temps de course pour n'importe quelle distance.">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    // Applique le thème mémorisé avant l'affichage (évite un flash)
+    try {
+      const t = localStorage.getItem("theme");
+      if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <main class="app">
+    <header class="app-header">
+      <div class="title-row">
+        <h1>Pace Calculator</h1>
+        <label class="theme-switch">
+          <input type="checkbox" id="theme-toggle" role="switch" aria-label="Mode sombre">
+          <span class="track" aria-hidden="true"></span>
+        </label>
+      </div>
+      <p class="tagline">Choisis ta distance, puis ton temps ou ton allure.</p>
+    </header>
+
+    <!-- Distance -->
+    <section class="card" aria-labelledby="distance-title">
+      <h2 id="distance-title">Distance</h2>
+      <div class="presets" role="group" aria-label="Distances prédéfinies">
+        <button type="button" class="preset" data-km="5">5 km</button>
+        <button type="button" class="preset" data-km="10">10 km</button>
+        <button type="button" class="preset" data-km="21.0975">Semi</button>
+        <button type="button" class="preset" data-km="42.195">Marathon</button>
+      </div>
+      <input id="distance-slider" class="slider" type="range" min="1" max="50" step="1" aria-label="Distance">
+      <div class="distance-field">
+        <button type="button" class="dist-step" data-dist-delta="-1" aria-label="Moins un kilomètre">−</button>
+        <div class="input-suffix">
+          <input id="distance" type="number" inputmode="decimal" step="1" max="50" value="10" aria-label="Distance en kilomètres">
+          <span class="suffix" aria-hidden="true">km</span>
+        </div>
+        <button type="button" class="dist-step" data-dist-delta="1" aria-label="Plus un kilomètre">+</button>
+      </div>
+      <p class="hint" id="distance-error" hidden>Entre une distance entre 0,1 et 50 km.</p>
+    </section>
+
+    <!-- Temps -->
+    <section class="card" aria-labelledby="time-title">
+      <h2 id="time-title">Temps</h2>
+      <input id="time-slider" class="slider" type="range" step="60" aria-label="Temps">
+      <div class="steppers" data-target="time">
+        <div class="stepper">
+          <button type="button" data-delta="-1" aria-label="Moins une heure">−</button>
+          <input type="number" inputmode="numeric" data-mult="3600" aria-label="Heures">
+          <button type="button" data-delta="1" aria-label="Plus une heure">+</button>
+          <span class="unit">h</span>
+        </div>
+        <span class="sep" aria-hidden="true">:</span>
+        <div class="stepper">
+          <button type="button" data-delta="-1" aria-label="Moins une minute">−</button>
+          <input type="number" inputmode="numeric" data-mult="60" aria-label="Minutes">
+          <button type="button" data-delta="1" aria-label="Plus une minute">+</button>
+          <span class="unit">min</span>
+        </div>
+        <span class="sep" aria-hidden="true">:</span>
+        <div class="stepper">
+          <button type="button" data-delta="-1" aria-label="Moins une seconde">−</button>
+          <input type="number" inputmode="numeric" data-mult="1" aria-label="Secondes">
+          <button type="button" data-delta="1" aria-label="Plus une seconde">+</button>
+          <span class="unit">s</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Allure -->
+    <section class="card" aria-labelledby="pace-title">
+      <h2 id="pace-title">Allure</h2>
+      <input id="pace-slider" class="slider" type="range" min="120" max="600" step="5" aria-label="Allure">
+      <div class="steppers" data-target="pace">
+        <div class="stepper">
+          <button type="button" data-delta="-1" aria-label="Moins une minute">−</button>
+          <input type="number" inputmode="numeric" data-mult="60" aria-label="Minutes par kilomètre">
+          <button type="button" data-delta="1" aria-label="Plus une minute">+</button>
+          <span class="unit">min</span>
+        </div>
+        <span class="sep" aria-hidden="true">:</span>
+        <div class="stepper">
+          <button type="button" data-delta="-1" aria-label="Moins une seconde">−</button>
+          <input type="number" inputmode="numeric" data-mult="1" aria-label="Secondes par kilomètre">
+          <button type="button" data-delta="1" aria-label="Plus une seconde">+</button>
+          <span class="unit">s</span>
+        </div>
+        <span class="sep per-km" aria-hidden="true">/km</span>
+      </div>
+    </section>
+
+    <!-- Résultats -->
+    <section class="card results" aria-labelledby="results-title">
+      <h2 id="results-title">Résultat</h2>
+      <p class="big-pace"><span id="result-pace">5:00</span> <span class="unit">/km</span></p>
+      <p class="recap" id="result-recap"></p>
+
+      <div class="splits-header">
+        <h3>Temps de passage</h3>
+        <label class="split-interval">
+          tous les
+          <input id="split-interval" type="number" inputmode="decimal" step="1" value="1" aria-label="Intervalle des temps de passage en km">
+          km
+        </label>
+      </div>
+      <div class="splits-wrap">
+        <table class="splits">
+          <thead><tr><th scope="col">Distance</th><th scope="col">Temps</th></tr></thead>
+          <tbody id="splits-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
